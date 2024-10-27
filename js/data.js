@@ -52,7 +52,7 @@ let usedIdsOfDescription = [];
 
 let usedUrlNum = [];
 
-const createPhotoDescription = () => {
+const createPhotoDescriptions = () => {
   let id = getRandomInteger(1, 25);
   while (usedIdsOfDescription.indexOf(id) !== -1) {
     id = getRandomInteger(1, 25);
@@ -72,4 +72,4 @@ const createPhotoDescription = () => {
   };
 };
 
-export {createPhotoDescription};
+export { createPhotoDescriptions };
