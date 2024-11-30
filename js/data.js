@@ -1,4 +1,4 @@
-import { getRandomInteger } from "./util.js";
+import { getRandomInteger } from './util.js';
 
 const MESSAGES = ['Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -52,6 +52,8 @@ let usedIdsOfDescription = [];
 
 let usedUrlNum = [];
 
+const PHOTO_DESCRIPTIONS_COUNT = 25;
+
 const createPhotoDescriptions = () => {
   let id = getRandomInteger(1, 25);
   while (usedIdsOfDescription.indexOf(id) !== -1) {
@@ -72,4 +74,6 @@ const createPhotoDescriptions = () => {
   };
 };
 
-export { createPhotoDescriptions };
+const createPhotos = () => Array.from({length: PHOTO_DESCRIPTIONS_COUNT}, createPhotoDescriptions);
+
+export { createPhotos };
