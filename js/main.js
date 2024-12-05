@@ -1,5 +1,7 @@
-import 'js/data.js';
-import 'js/util.js';
-import { createPhotoDescriptions } from './data';
+import './data.js';
+import './util.js';
+import { createPhotos } from './data.js';
+import './pictures.js';
 
-const photoDescriptions = Array.from({length: 25}, createPhotoDescriptions);
+createPhotos();
+
