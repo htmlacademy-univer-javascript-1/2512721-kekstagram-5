@@ -27,3 +27,4 @@ const renderPicturesList = (post) => {
 };
 
 export { renderPicturesList };
+
