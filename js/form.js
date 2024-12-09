@@ -42,7 +42,7 @@ const MAX_HASHTAGS_COUNT = 5;
 const MAX_COMMENT_LENGTH = 140;
 
 function validHashtags(value) {
-  const hashtags = value.split(' ').map((hasgtag) => hashtag.toLowerCase());
+  const hashtags = value.split(' ').map((hashtag) => hashtag.toLowerCase());
   const isValid = hashtags.every((hashtag) => VALID_SYMBOLS.test(hashtag)) || hashtags[0] === '';
 
   if (hashtags.length > MAX_HASHTAGS_COUNT) {
