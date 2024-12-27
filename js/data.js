@@ -42,7 +42,7 @@ const createComment = () => {
   usedIdsOfComment.push(id);
   return {
     id: id,
-    avatar: 'img/avatar-' + getRandomInteger(1, 6) + '.svg',
+    avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
     message: MESSAGES[getRandomInteger(0, MESSAGES.length - 1)],
     name: NAMES[getRandomInteger(0, NAMES.length - 1)],
   };
@@ -67,7 +67,7 @@ const createPhotoDescriptions = () => {
   usedUrlNum.push(urlNum);
   return {
     id: id,
-    url: 'photos/' + urlNum + '.jpg',
+    url: `photos/${urlNum}.jpg`,
     description: DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)],
     likes: getRandomInteger(15, 200),
     comments: Array.from({length: getRandomInteger(0, 30)}, createComment),
