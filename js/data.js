@@ -64,6 +64,7 @@ const createComment = () => ({
   name: getRandomArrayElement(NAMES),
 });
 
+
 const createPicture = (index) => ({
   id: index,
   url: `photos/${index}.jpg`,
