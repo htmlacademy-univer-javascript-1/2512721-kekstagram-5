@@ -2,10 +2,14 @@ const checkLength = function (string, len) {
   return (string.length <= len);
 };
 
+checkLength('abc', 5);
+
 const checkPalindrom = function (string) {
   const checkString = string.replaceAll(' ', '').toLowerCase().split('').reverse().join('');
   return string.replaceAll(' ', '').toLowerCase() === checkString;
 };
+
+checkPalindrom('abcba');
 
 const checkTimeOfMeeting = function (openTime, closeTime, startTime, time) {
   let timeList = openTime.split(':');
@@ -20,3 +24,5 @@ const checkTimeOfMeeting = function (openTime, closeTime, startTime, time) {
     return true;
   }
 };
+
+checkTimeOfMeeting('11:00', '18:00', '13:00', 90);

@@ -1,6 +1,4 @@
 const form = document.querySelector('.img-upload__form');
-const imgUpload = document.querySelector('.img-upload__input');
-const imgUploadCancel = document.querySelector('.img-upload__cancel');
 const imgOverlay = document.querySelector('.img-upload__overlay');
 const textHashtags = document.querySelector('.text__hashtags');
 const textDescription = document.querySelector('.text__description');
@@ -11,12 +9,6 @@ const pristine = new Pristine (form, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
 });
-
-function showForm() {
-  imgOverlay.classList.remove('.hidden');
-  document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeyDown);
-}
 
 function hideForm() {
   imgOverlay.classList.add('.hidden');
@@ -35,8 +27,6 @@ function onDocumentKeyDown(evt) {
   }
 }
 
-const onFileInputChange = () => showForm();
-const onCancelButtonClick = () => hideForm();
 
 const MAX_HASHTAGS_COUNT = 5;
 const MAX_COMMENT_LENGTH = 140;
