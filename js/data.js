@@ -1,4 +1,4 @@
-import { getRandomInteger } from './util.js';
+import { getRandomInt, getRandomArrayElement, createIdGenerator } from './util.js';
 
 const MESSAGES = ['Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -32,49 +32,52 @@ const DESCRIPTIONS = ['Продолжай улыбаться, потому чт�
   'Есть лишь один человек, на которого я могу надеяться ― это я сам. И знаете что? Этот человек ни разу меня не подводил.'
 ];
 
-let usedIdsOfComment = [];
-
-const createComment = () => {
-  let id = getRandomInteger(1, 10000);
-  while (usedIdsOfComment.indexOf(id) !== -1) {
-    id = getRandomInteger(1, 10000);
-  }
-  usedIdsOfComment.push(id);
-  return {
-    id: id,
-    avatar: 'img/avatar-' + getRandomInteger(1, 6) + '.svg',
-    message: MESSAGES[getRandomInteger(0, MESSAGES.length - 1)],
-    name: NAMES[getRandomInteger(0, NAMES.length - 1)],
-  };
+const PICTURE_COUNT = 25;
+const AvatarId = {
+  MIN: 1,
+  MAX: 6,
+};
+const LikeCount = {
+  MIN: 15,
+  MAX: 200,
+};
+const CommentCount = {
+  MIN: 0,
+  MAX: 30,
+};
+const StringCount = {
+  MIN: 1,
+  MAX: 2,
 };
 
-let usedIdsOfDescription = [];
+const createIdComment = createIdGenerator();
 
-let usedUrlNum = [];
+const createMessage = () => Array.from(
+  { length: getRandomInt(StringCount.MIN, StringCount.MAX) },
+  () => getRandomArrayElement(MESSAGES),
+).join(' ');
 
-const PHOTO_DESCRIPTIONS_COUNT = 25;
+const createComment = () => ({
+  id: createIdComment(),
+  avatar: `img/avatar-${getRandomInt(AvatarId.MIN, AvatarId.MAX)}.svg`,
+  message: createMessage(),
+  name: getRandomArrayElement(NAMES),
+});
 
-const createPhotoDescriptions = () => {
-  let id = getRandomInteger(1, 25);
-  while (usedIdsOfDescription.indexOf(id) !== -1) {
-    id = getRandomInteger(1, 25);
-  }
-  usedIdsOfDescription.push(id);
-  let urlNum = getRandomInteger(1, 25);
-  while (usedUrlNum.indexOf(urlNum) !== -1) {
-    urlNum = getRandomInteger(1, 25);
-  }
-  usedUrlNum.push(urlNum);
-  return {
-    id: id,
-    url: 'photos/' + urlNum + '.jpg',
-    description: DESCRIPTIONS[getRandomInteger(0, DESCRIPTIONS.length - 1)],
-    likes: getRandomInteger(15, 200),
-    comments: Array.from({length: getRandomInteger(0, 30)}, createComment),
-  };
-};
+const createPicture = (index) => ({
+  id: index,
+  url: `photos/${index}.jpg`,
+  description: getRandomArrayElement(DESCRIPTIONS),
+  likes: getRandomInt(LikeCount.MIN, LikeCount.MAX),
+  comments: Array.from(
+    { length: getRandomInt(CommentCount.MIN, CommentCount.MAX) },
+    createComment,
+  ),
+});
 
-const createPhotos = () => Array.from({length: PHOTO_DESCRIPTIONS_COUNT}, createPhotoDescriptions);
+const getPictures = () => Array.from(
+  { length: PICTURE_COUNT },
+  (_, pictureIndex) => createPicture(pictureIndex + 1),
+);
 
-export { createPhotos };
-
+export { getPictures };
