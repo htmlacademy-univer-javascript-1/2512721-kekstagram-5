@@ -1,8 +1,5 @@
-import './data.js';
-import './util.js';
-import { createPhotos } from './data.js';
-import './pictures.js';
-import './form.js';
+import { getPictures } from './data.js';
+import { renderGallery } from './big_picture';
 
-createPhotos();
+renderGallery(getPictures());
 
