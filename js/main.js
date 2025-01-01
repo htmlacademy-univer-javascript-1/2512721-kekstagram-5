@@ -1,5 +1,16 @@
-import { getPictures } from './data.js';
-import { renderGallery } from './big_picture';
+import { renderGallery } from './big_picture.js';
+import { initEditPopup } from './form.js';
+import { getData } from './api.js';
+import { showAlert } from './message.js';
 
-renderGallery(getPictures());
+getData()
+  .then((thumbnails) => {
+    renderGallery(thumbnails);
+  })
+  .catch(
+    () => {
+      showAlert('Проблемы с сервером: не удалось загрузить данные. Попробуйте обновить страницу!');
+    }
+  );
 
+initEditPopup();

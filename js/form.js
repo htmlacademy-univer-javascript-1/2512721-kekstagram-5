@@ -1,72 +1,138 @@
+import { initScale, destroyScale } from './scale_change.js';
+import { initEffect, destroyEffect } from './effects.js';
+import { isValidTypeFile } from './type.js';
+import { sendData } from './api.js';
+import { showSuccessMessage, showErrorMessage } from './message.js';
+
+const MAX_COUNT_HASHTAG = 5;
+const PATTERN_VALID = /^#[a-zа-яё0-9]{1,19}$/i;
+
+const body = document.querySelector('body');
 const form = document.querySelector('.img-upload__form');
-const imgUpload = document.querySelector('.img-upload__input');
-const imgUploadCancel = document.querySelector('.img-upload__cancel');
-const imgOverlay = document.querySelector('.img-upload__overlay');
-const textHashtags = document.querySelector('.text__hashtags');
-const textDescription = document.querySelector('.text__description');
+const closeBtn = form.querySelector('.img-upload__cancel');
+const overlay = form.querySelector('.img-upload__overlay');
+const fileInput = form.querySelector('.img-upload__input');
+const comment = form.querySelector('.text__description');
+const hashtag = form.querySelector('.text__hashtags');
+const submitBtn = body.querySelector('.img-upload__submit');
 
-const VALID_SYMBOLS = /^#[a-zа-яё0-9](1,19)$/i;
+const submitBtnText = {
+  IDLE: 'Опубликовать',
+  SENDING: 'Отправляю...'
+};
 
-const pristine = new Pristine (form, {
+const Error = {
+  PATTERN_INVALID: 'Неверный хэштег!',
+  UNORIGINALITY: 'Хэштеги не могут быть одинаковыми!',
+  COUNT_INVALID: `Максимум может быть ${MAX_COUNT_HASHTAG} хэштегов!`,
+};
+
+const рristine = new Pristine(form, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
-});
+  errorTextClass: 'img-upload-error',
+}, false);
 
-function showForm() {
-  imgOverlay.classList.remove('.hidden');
-  document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onDocumentKeyDown);
-}
+const disableSubmitBtn = () => {
+  submitBtn.disabled = true;
+  submitBtn.textContent = submitBtnText.SENDING;
+};
 
-function hideForm() {
-  imgOverlay.classList.add('.hidden');
-  document.body.classList.remove('modal-open');
-  form.reset();
-  document.removeEventListener('keydown', onDocumentKeyDown);
-}
+const allowSubmitBtn = () => {
+  submitBtn.disabled = false;
+  submitBtn.textContent = submitBtnText.IDLE;
+};
 
-function onDocumentKeyDown(evt) {
-  if (evt.key === 'Escape') {
-    evt.preventDefault();
-    const isTextFieldFocused = [textHashtags, textDescription].some((el) => el === document.activeElement);
-    if (isTextFieldFocused) {
-      hideForm();
+const standardizeTag = (tag) => tag.trim().split(' ');
+
+const isValidPatternTag = (value) => {
+  for (const normTag of standardizeTag(value).map((tag) => PATTERN_VALID.test(tag))) {
+    if (!normTag) {
+      return false;
     }
   }
-}
+  return true;
+};
 
-const onFileInputChange = () => showForm();
-const onCancelButtonClick = () => hideForm();
+const isValidCountTag = (value) => standardizeTag(value).length <= MAX_COUNT_HASHTAG;
 
-const MAX_HASHTAGS_COUNT = 5;
-const MAX_COMMENT_LENGTH = 140;
+const isOriginalTag = (value) => {
+  const lowerCaseTags = standardizeTag(value).map((tag) => tag.toLowerCase());
+  return lowerCaseTags.length === new Set(lowerCaseTags).size;
+};
 
-function validHashtags(value) {
-  const hashtags = value.split(' ').map((hashtag) => hashtag.toLowerCase());
-  const isValid = hashtags.every((hashtag) => VALID_SYMBOLS.test(hashtag)) || hashtags[0] === '';
+const initValidate = () => {
+  рristine.addValidator(hashtag, isValidPatternTag, Error.PATTERN_INVALID, 3, true);
+  рristine.addValidator(hashtag, isValidCountTag, Error.COUNT_INVALID, 2, true);
+  рristine.addValidator(hashtag, isOriginalTag, Error.UNORIGINALITY, 1, true);
+};
 
-  if (hashtags.length > MAX_HASHTAGS_COUNT) {
-    return {valid: false, message: 'Максимальное количество хештегов: 5'};
-  } else if (new Set(hashtags).size !== hashtags.length) {
-    return {valid: false, message: 'Хештеги не могут повторяться'};
-  } else if (!isValid) {
-    return {valid: false, message: 'Некорректный формат хештегов'};
+const openEditPopup = () => {
+  overlay.classList.remove('hidden');
+  body.classList.add('modal-open');
+  document.addEventListener('keydown', onDocumentKeydownClosing);
+  closeBtn.addEventListener('click', onCloseBtnClick);
+  comment.addEventListener('keydown', onDocumentKeydownIgnore);
+  hashtag.addEventListener('keydown', onDocumentKeydownIgnore);
+  form.addEventListener('submit', onFormSubmit);
+};
+
+const onFileInputChange = () => {
+  if (isValidTypeFile()) {
+    openEditPopup();
+    initValidate();
+    initScale();
+    initEffect();
   }
-  return {valid: true};
+};
+
+const closeEditPopup = () => {
+  form.reset();
+  рristine.reset();
+  overlay.classList.add('hidden');
+  body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onDocumentKeydownClosing);
+  closeBtn.removeEventListener('click', onCloseBtnClick);
+  comment.removeEventListener('keydown', onDocumentKeydownIgnore);
+  hashtag.removeEventListener('keydown', onDocumentKeydownIgnore);
+  form.removeEventListener('submit', onFormSubmit);
+  destroyScale();
+  destroyEffect();
+};
+
+function onCloseBtnClick() {
+  closeEditPopup();
 }
 
-pristine.addValidator(textHashtags,
-  (value) => validHashtags(value).valid,
-  (value) => validHashtags(value).message);
+function onDocumentKeydownClosing(evt) {
+  if (evt.key === 'Escape') {
+    evt.preventDefault();
+    closeEditPopup();
+  }
+}
 
-pristine.addValidator(textDescription,
-  (value) => value.length <= MAX_COMMENT_LENGTH,
-  'Максимальная длина комментария 140 символов.');
+function onDocumentKeydownIgnore(evt) {
+  if (evt.key === 'Escape') {
+    evt.stopPropagation();
+  }
+}
 
-form.addEventListener('submit', (evt) => {
+function onFormSubmit(evt) {
   evt.preventDefault();
-  const isValidate = pristine.validate();
-  if (isValidate) {
-    form.submit();
+  const isValid = рristine.validate();
+  if (isValid) {
+    disableSubmitBtn();
+    sendData(new FormData(evt.target))
+      .then(closeEditPopup())
+      .then(showSuccessMessage)
+      .catch(() => {
+        closeEditPopup();
+        showErrorMessage();
+      })
+      .finally(allowSubmitBtn);
   }
-});
+}
+
+export const initEditPopup = () => {
+  fileInput.addEventListener('change', onFileInputChange);
+};
