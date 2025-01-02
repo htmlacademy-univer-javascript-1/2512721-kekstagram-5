@@ -1,11 +1,11 @@
-import { renderGallery } from './big_picture.js';
-import { initEditPopup } from './form.js';
+import { initEditPopup } from './edit-popup.js';
 import { getData } from './api.js';
 import { showAlert } from './message.js';
+import { showFilteredPhotos } from './filter.js';
 
 getData()
   .then((thumbnails) => {
-    renderGallery(thumbnails);
+    showFilteredPhotos(thumbnails);
   })
   .catch(
     () => {
