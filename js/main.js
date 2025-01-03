@@ -1,4 +1,4 @@
-import { initEditPopup } from './edit-popup.js';
+import { initEditPopup } from './form.js';
 import { getData } from './api.js';
 import { showAlert } from './message.js';
 import { showFilteredPhotos } from './filter.js';
