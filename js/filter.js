@@ -4,10 +4,10 @@ const MAX_COUNT_PHOTO_BOARD = 10;
 const ACTIVE_FILTER_CLASS = 'img-filters__button--active';
 const HIDDEN_FILTER_CLASS = 'img-filters--inactive';
 
-const filterContainer = document.querySelector('.img-filters');
-const defaultfFilter = document.querySelector('#filter-default');
-const randomFilter = document.querySelector('#filter-random');
-const discussedFilter = document.querySelector('#filter-discussed');
+const filterContainerElement = document.querySelector('.img-filters');
+const defaultFilterElement = document.querySelector('#filter-default');
+const randomFilterElement = document.querySelector('#filter-random');
+const discussedFilterElement = document.querySelector('#filter-discussed');
 
 function debounce (callback, timeoutDelay = 500) {
   let timeoutId;
@@ -44,9 +44,9 @@ const sortRandomPhotos = (photos, count) => getRandomElementArray(photos, count)
 const sortDiscussedPhotos = (firstPhoto, secondPhoto) => secondPhoto.comments.length - firstPhoto.comments.length;
 
 const filterMethod = {
-  DEFAULT: (miniatures) => miniatures.slice(),
-  RANDOM: (miniatures) => sortRandomPhotos(miniatures, MAX_COUNT_PHOTO_BOARD).slice(),
-  DISCUSSED: (miniatures) => miniatures.slice().sort(sortDiscussedPhotos),
+  getDefaultMiniatures: (miniatures) => miniatures.slice(),
+  getRandomMiniatures: (miniatures) => sortRandomPhotos(miniatures, MAX_COUNT_PHOTO_BOARD).slice(),
+  getDiscussedMiniatures: (miniatures) => miniatures.slice().sort(sortDiscussedPhotos),
 };
 
 const removePhotos = () => document.querySelectorAll('.picture').forEach((photo) => photo.remove());
@@ -61,15 +61,15 @@ const changePhotos = (photos, filter) => {
 
 export const showFilteredPhotos = (miniatures) => {
   renderGallery(miniatures);
-  filterContainer.classList.remove(HIDDEN_FILTER_CLASS);
+  filterContainerElement.classList.remove(HIDDEN_FILTER_CLASS);
 
-  defaultfFilter.addEventListener('click', debounce(() => {
-    changePhotos(filterMethod.DEFAULT(miniatures), defaultfFilter);
+  defaultFilterElement.addEventListener('click', debounce(() => {
+    changePhotos(filterMethod.getDefaultMiniatures(miniatures), defaultFilterElement);
   }));
-  randomFilter.addEventListener('click', debounce(() => {
-    changePhotos(filterMethod.RANDOM(miniatures), randomFilter);
+  randomFilterElement.addEventListener('click', debounce(() => {
+    changePhotos(filterMethod.getRandomMiniatures(miniatures), randomFilterElement);
   }));
-  discussedFilter.addEventListener('click', debounce(() => {
-    changePhotos(filterMethod.DISCUSSED(miniatures), discussedFilter);
+  discussedFilterElement.addEventListener('click', debounce(() => {
+    changePhotos(filterMethod.getDiscussedMiniatures(miniatures), discussedFilterElement);
   }));
 };
