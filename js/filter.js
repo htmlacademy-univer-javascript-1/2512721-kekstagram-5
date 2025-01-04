@@ -1,4 +1,4 @@
-import { renderGallery } from './big_picture.js';
+import { renderGallery } from './rendering-big-picture.js';
 
 const MAX_COUNT_PHOTO_BOARD = 10;
 const ACTIVE_FILTER_CLASS = 'img-filters__button--active';

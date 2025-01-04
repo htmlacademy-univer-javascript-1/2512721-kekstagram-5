@@ -1,8 +1,8 @@
-import { initEditPopup } from './form.js';
+import { initEditPopup } from './popup.js';
 import { getData } from './api.js';
 import { showAlert } from './message.js';
 import { showFilteredPhotos } from './filter.js';
-import { closeEditPopup, setFormSubmit } from './form.js';
+import { closeEditPopup, setFormSubmit } from './popup.js';
 
 getData()
   .then((thumbnails) => {

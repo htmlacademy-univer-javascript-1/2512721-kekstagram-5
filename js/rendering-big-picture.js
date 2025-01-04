@@ -1,5 +1,5 @@
-import { renderThumbnails } from './pictures.js';
-import { showFullSizePicture } from './draw_pictures.js';
+import { renderThumbnails } from './thumbnails.js';
+import { showFullSizePicture } from './displaying-gallery.js';
 
 const pictureContainerElement = document.querySelector('.pictures');
 let pictures = [];
