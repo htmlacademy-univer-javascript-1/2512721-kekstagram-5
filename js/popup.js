@@ -1,6 +1,6 @@
-import { initScale, destroyScale } from './scale_change.js';
+import { initScale, destroyScale } from './scale-change.js';
 import { initEffect, destroyEffect } from './effects.js';
-import { isValidTypeFile } from './type.js';
+import { isValidTypeFile } from './type-photo.js';
 import { sendData } from './api.js';
 import { showSuccessMessage, showErrorMessage } from './message.js';
 
